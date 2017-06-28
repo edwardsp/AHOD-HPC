@@ -55,6 +55,7 @@ export I_MPI_FABRICS=shm:dapl
 export I_MPI_DAPL_PROVIDER=ofa-v2-ib0
 export I_MPI_DYNAMIC_CONNECTION=0
 export I_MPI_DAPL_TRANSLATION_CACHE=0
+export WCOLL=/home/$USER/bin/hostlist
 EOF
 chown $USER:$USER /home/$USER/.bashrc
 
@@ -63,12 +64,16 @@ chown $USER:$USER /home/$USER/.bashrc
 #sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
 #sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
 
+touch /home/hpcuser/bin/hostlist
+chown hpcuser:hpcuser /home/hpcuser/bin/hostlist
+
 ssh-keygen -f /home/$USER/.ssh/id_rsa -t rsa -N ''
 cat << EOF > /home/$USER/.ssh/config
 Host *
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
     PasswordAuthentication no
+    LogLevel QUIET
 EOF
 cat /home/$USER/.ssh/id_rsa.pub >> /home/$USER/.ssh/authorized_keys
 chmod 644 /home/$USER/.ssh/config
