@@ -6,14 +6,14 @@ Azure Resource Manager Templates for Ad-Hoc On-Demand HPC clusters
 <td align="center">
 Deploy cluster with a new VNet
 <br><br>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftanewill%2FAHOD-HPC%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fedwardsp%2FAHOD-HPC%2Fmaster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
 </td>
 <td align="center">
 Deploy cluster to an existing VNet
 <br><br>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftanewill%2FAHOD-HPC%2Fmaster%2Fazuredeploy_existingvnet.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fedwardsp%2FAHOD-HPC%2Fmaster%2Fazuredeploy_existingvnet.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
 </td></tr>
@@ -21,14 +21,14 @@ Deploy cluster to an existing VNet
 <td align="center">
 Deploy using managed disks (experimental)
 <br><br>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftanewill%2FAHOD-HPC%2Fmaster%2Fazuredeploy_disks.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fedwardsp%2FAHOD-HPC%2Fmaster%2Fazuredeploy_disks.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
 </td>
 <td align="center">
 Visualize architecture
 <br><br>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Ftanewill%2FAHOD%2Fmaster%2Fazuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fedwardsp%2FAHOD%2Fmaster%2Fazuredeploy.json" target="_blank">
 <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 </td>
@@ -36,7 +36,7 @@ Visualize architecture
 <td align="center">
 Deploy using JSON copy
 <br><br>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftanewill%2FAHOD-HPC%2Fmaster%2Fazuredeploy_ARMcopy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fedwardsp%2FAHOD-HPC%2Fmaster%2Fazuredeploy_ARMcopy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png" />
 </a>
 </td>
