@@ -2,26 +2,6 @@
 	"$schema": "http://schema.management.azure.com/schemas/2015-01-01-preview/deploymentTemplate.json",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
-		"solver": {
-			"defaultValue": "Raw",
-			"allowedValues": [
-				"ABAQUS",
-				"ANSYS_CFX",
-				"ANSYS_Fluent",
-				"ANSYS_Mechanical",
-				"DataSynapse",
-				"Exa_PowerFlow",
-				"OpenFOAM",
-				"Raw",
-				"StarCCM-10",
-				"StarCCM-11",
-				"StarCCM-12"
-			],
-			"type": "String",
-			"metadata": {
-				"description": "Please select the solver that you would like to test"
-			}
-		},
 		"vmSku": {
 			"defaultValue": "Standard_H16r",
 			"allowedValues": [
@@ -48,52 +28,13 @@
 			"metadata": {
 				"description": "Number of VM instances (100 or less)."
 			}
-		},
-		"adminUsername": {
-			"type": "String",
-			"metadata": {
-				"description": "Admin username on all VMs."
-			}
-		},
-		"adminPassword": {
+        },
+        "rsaPublicKey": {
 			"type": "SecureString",
 			"metadata": {
-				"description": "Admin password on all VMs."
+                "description": "The RSA public key to access the headnode."
 			}
-		},
-		"license": {
-			"maxLength": 30,
-			"defaultValue": "0.0.0.0",
-			"type": "String",
-			"metadata": {
-				"description": "This is the IP address of the license server or POD key for the application. If license is unknown or not required simply enter 0.0.0.0, if a license is required, but unknown the application will not work"
-			}
-		},
-		"downloadModel": {
-			"defaultValue": "None",
-			"allowedValues": [
-				"None",
-				"ABAQUS_newStdPerf-1.tgz",
-				"ABAQUS_newStdPerf-2.tgz",
-				"ABAQUS_newStdPerf-3.tgz",
-				"ABAQUS_newStdPerf-4.tgz",
-				"ABAQUS_newXplPerf.tgz",
-				"ABAQUS_oldStdPerf.tgz",
-				"ANSYS_Fluent_aircraft_wing_14m.tar",
-				"ANSYS_Fluent_f1_racecar_140m.tar",
-				"ANSYS_Fluent_sedan_4m.tar",
-				"CCM_Civil.tgz",
-				"CCM_LeMans_17M.tgz",
-				"CCM_LeMans_100M.tgz",
-				"CCM_LeMans_514M.tgz",
-				"CCM_VTM_68M.tgz",
-				"CCM_VTM_178M.tgz"			
-			],
-			"type": "String",
-			"metadata": {
-				"description": "Which benchmark model would you like to download, make sure to select the appropriate model for your solver"
-			}
-		}
+        }
 	},
 	"variables": {
 		"resourceLocation": "[resourceGroup().location]",
@@ -127,7 +68,7 @@
 		"publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
 		"nicName": "[concat(variables('namingInfix'), 'nic')]",
 		"ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
-		"scriptUrl": "https://raw.githubusercontent.com/tanewill/AHOD-HPC/master/",
+        "scriptUrl": "https://raw.githubusercontent.com/edwardsp/AHOD-HPC/master/",
 		"cnSetupScript": "cn-setup.sh",
 		"hnSetupScript": "hn-setup.sh",
 		"osType": {
@@ -147,10 +88,7 @@
 		"vmScripts": {
 			"scriptsToDownload": [
 				"[concat(variables('scriptUrl'), 'cn-setup.sh')]",
-				"[concat(variables('scriptUrl'), 'hn-setup.sh')]",
-				"[concat(variables('scriptUrl'), 'install_ganglia.sh')]",
-				"[concat(variables('scriptUrl'), 'clusRun.sh')]",
-				"[concat(variables('scriptUrl'), 'install-', parameters('solver'), '.sh')]"	
+                "[concat(variables('scriptUrl'), 'hn-setup.sh')]"
 			],
 			"commandToExecute": ""
 		},
@@ -241,8 +179,14 @@
 			},
 			"osProfile": {
 				"computerName": "[variables('jumpBoxName')]",
-				"adminUsername": "[parameters('adminUsername')]",
-				"adminPassword": "[parameters('adminPassword')]"
+                "adminUsername": "hpcuser",
+                "linuxConfiguration": {
+                    "disablePasswordAuthentication": "true",
+                    "ssh": {
+                        "sshKeyPath": "/home/hpcuser/.ssh/authorized_keys",
+                        "keyData": "[parameters('sshPublicKey')]"
+                    }
+                }
 			},
 			"storageProfile": {
 				"imageReference": "[variables('JBimageReference')]",
@@ -282,7 +226,7 @@
 				"autoUpgradeMinorVersion": true,
 				"settings": {
 					"fileUris": "[variables('vmScripts').scriptsToDownload]",
-					"commandToExecute": "[concat('bash ', 'hn-setup.sh ',parameters('solver'),' ',parameters('adminUsername'),' ',parameters('adminPassword'),' ',parameters('downloadModel'),' ',parameters('license')) ]",
+                    "commandToExecute": "bash hn-setup.sh",
 					"timestamp": 4
 				}
 			},
@@ -328,8 +272,8 @@
 				},
 				"osProfile": {
 					"computerNamePrefix": "[variables('namingInfix')]",
-					"adminUsername": "[parameters('adminUsername')]",
-					"adminPassword": "[parameters('adminPassword')]"
+                    "adminUsername": "hpcuser",
+                    "adminPassword": "Microsoft123"
 				},
 				"networkProfile": {
 					"networkInterfaceConfigurations": [{
