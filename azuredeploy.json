@@ -92,7 +92,7 @@
 			],
 			"commandToExecute": ""
 		},
-		"computeApiVersion": "2016-03-30",
+        "computeApiVersion": "2016-04-30-preview",
 		"networkApiVersion": "2016-03-30",
 		"storageApiVersion": "2015-06-15"
 	},
@@ -261,15 +261,6 @@
 			"virtualMachineProfile": {
 				"storageProfile": {
 					"osDisk": {
-						"vhdContainers": [
-							"[concat('https://', variables('uniqueStringArray')[0], variables('newStorageAccountSuffix'), '.blob.core.windows.net/', variables('vhdContainerName'))]",
-							"[concat('https://', variables('uniqueStringArray')[1], variables('newStorageAccountSuffix'), '.blob.core.windows.net/', variables('vhdContainerName'))]",
-							"[concat('https://', variables('uniqueStringArray')[2], variables('newStorageAccountSuffix'), '.blob.core.windows.net/', variables('vhdContainerName'))]",
-							"[concat('https://', variables('uniqueStringArray')[3], variables('newStorageAccountSuffix'), '.blob.core.windows.net/', variables('vhdContainerName'))]",
-							"[concat('https://', variables('uniqueStringArray')[4], variables('newStorageAccountSuffix'), '.blob.core.windows.net/', variables('vhdContainerName'))]"
-						],
-						"name": "[variables('osDiskName')]",
-						"caching": "ReadOnly",
 						"createOption": "FromImage"
 					},
 					"imageReference": "[variables('imageReference')]"
@@ -297,6 +288,30 @@
 				}
 			}
 		},
+        "resources": [{
+            "type": "extensions",
+            "name": "masterExtension",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "location": "[variables('resourceLocation')]",
+            "tags": {
+                "displayName": "masterExtension"
+            },
+            "properties": {
+                "publisher": "Microsoft.OSTCExtensions",
+                "type": "CustomScriptForLinux",
+                "typeHandlerVersion": "1.5",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": "[variables('vmScripts').scriptsToDownload]",
+                    "commandToExecute": "bash cn-setup.sh",
+                    "timestamp": 4
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]",
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/',variables('namingInfix'))]"
+            ]
+        }],
 		"dependsOn": [
 			"[concat('Microsoft.Storage/storageAccounts/', variables('jumpBoxSAName'))]",
 			"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"

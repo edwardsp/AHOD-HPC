@@ -43,6 +43,20 @@ systemctl restart nfs-server
 mv clusRun.sh cn-setup.sh /home/$USER/bin
 chmod +x /home/$USER/bin/*.sh
 chown $USER:$USER /home/$USER/bin
+wget -q https://raw.githubusercontent.com/tanewill/AHOD-HPC/master/full-pingpong.sh -O /home/$USER/full-pingpong.sh
+chmod 755 /home/$USER/full-pingpong.sh
+chown $USER:$USER /home/$USER/full-pingpong.sh
+
+cat << EOF >> /home/$USER/.bashrc
+if [ -d "/opt/intel/impi" ]; then
+    source /opt/intel/impi/*/bin64/mpivars.sh
+fi
+export I_MPI_FABRICS=shm:dapl
+export I_MPI_DAPL_PROVIDER=ofa-v2-ib0
+export I_MPI_DYNAMIC_CONNECTION=0
+export I_MPI_DAPL_TRANSLATION_CACHE=0
+EOF
+chown $USER:$USER /home/$USER/.bashrc
 
 nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
 myhost=`hostname -i`
@@ -58,6 +72,7 @@ Host *
 EOF
 cat /home/$USER/.ssh/id_rsa.pub >> /home/$USER/.ssh/authorized_keys
 chmod 644 /home/$USER/.ssh/config
+chown $USER:$USER /home/$USER/.ssh/*
 
 # Don't require password for HPC user sudo
 echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
