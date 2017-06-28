@@ -42,23 +42,11 @@
 		"longNamingInfix": "[toLower(parameters('vmssName'))]",
 		"jumpBoxName": "[concat(variables('longNamingInfix'),'jb')]",
 		"jumpBoxSAName": "[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), 'jumpboxsa')), 'jb')]",
-		"jumpBoxOSDiskName": "[concat(variables('jumpBoxName'), 'osdisk')]",
-		"jumpBoxVHDContainerName": "[concat(variables('jumpBoxName'), 'vhd')]",
-		"jumpBoxIPConfigName": "[concat(variables('jumpBoxName'), 'ipconfig')]",
+        "jumpBoxIPConfigName": "[concat(variables('jumpBoxName'), 'ipconfig')]",
 		"jumpBoxNicName": "[concat(variables('jumpBoxName'), 'nic')]",
 		"storageAccountType": "Standard_LRS",
-		"newStorageAccountSuffix": "[concat(variables('namingInfix'), 'sa')]",
-		"uniqueStringArray": [
-			"[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '0')))]",
-			"[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '1')))]",
-			"[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '2')))]",
-			"[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '3')))]",
-			"[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), '4')))]"
-		],
-		"saCount": "[length(variables('uniqueStringArray'))]",
-		"vhdContainerName": "[concat(variables('namingInfix'), 'vhd')]",
-		"osDiskName":"[concat(variables('namingInfix'), 'osdisk')]",
-		"addressPrefix": "10.0.0.0/16",
+        "newStorageAccountSuffix": "[concat(variables('namingInfix'), 'sa')]",
+        "addressPrefix": "10.0.0.0/16",
 		"subnetPrefix": "10.0.0.0/24",
 		"virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
 		"subnetName": "[concat(variables('namingInfix'), 'subnet')]",
@@ -115,19 +103,7 @@
 		"properties": {
 			"accountType": "[variables('storageAccountType')]"
 		}
-	}, {
-		"type": "Microsoft.Storage/storageAccounts",
-		"name": "[concat(variables('uniqueStringArray')[copyIndex()], variables('newStorageAccountSuffix'))]",
-		"apiVersion": "[variables('storageApiVersion')]",
-		"location": "[variables('resourceLocation')]",
-		"copy": {
-			"name": "storageLoop",
-			"count": "[variables('saCount')]"
-		},
-		"properties": {
-			"accountType": "[variables('storageAccountType')]"
-		}
-	}, {
+    }, {
 		"type": "Microsoft.Network/publicIPAddresses",
 		"name": "[variables('publicIPAddressName')]",
 		"apiVersion": "[variables('networkApiVersion')]",
@@ -188,13 +164,8 @@
 			"storageProfile": {
 				"imageReference": "[variables('JBimageReference')]",
 				"osDisk": {
-					"name": "[variables('jumpBoxOSDiskName')]",
-					"vhd": {
-						"uri": "[concat('http://',variables('jumpBoxSAName'),'.blob.core.windows.net/',variables('jumpBoxVHDContainerName'),'/',variables('jumpBoxOSDiskName'),'.vhd')]"
-					},
-					"caching": "ReadWrite",
 					"createOption": "FromImage"
-				}
+                }
 			},
 			"networkProfile": {
 				"networkInterfaces": [{
