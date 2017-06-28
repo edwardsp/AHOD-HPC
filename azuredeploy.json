@@ -85,13 +85,6 @@
 			"version": "latest"
 		},
 		"JBimageReference": "[variables('JBoxType')]",
-		"vmScripts": {
-			"scriptsToDownload": [
-				"[concat(variables('scriptUrl'), 'cn-setup.sh')]",
-                "[concat(variables('scriptUrl'), 'hn-setup.sh')]"
-			],
-			"commandToExecute": ""
-		},
         "computeApiVersion": "2016-04-30-preview",
 		"networkApiVersion": "2016-03-30",
 		"storageApiVersion": "2015-06-15"
@@ -229,7 +222,7 @@
 				"typeHandlerVersion": "1.5",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
-                    "fileUris": "[concat(variables('scriptUrl'), 'hn-setup.sh')]",
+                    "fileUris": [ "[concat(variables('scriptUrl'), 'hn-setup.sh')]" ],
                     "commandToExecute": "bash hn-setup.sh",
                     "timestamp": 12345
 				}
