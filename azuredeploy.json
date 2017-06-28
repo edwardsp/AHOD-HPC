@@ -217,11 +217,11 @@
 		},
 		"resources": [{
 			"type": "extensions",
-			"name": "masterExtension",
+            "name": "hostExtension",
 			"apiVersion": "[variables('storageApiVersion')]",
 			"location": "[variables('resourceLocation')]",
 			"tags": {
-				"displayName": "masterExtension"
+                "displayName": "hostExtension"
 			},
 			"properties": {
 				"publisher": "Microsoft.OSTCExtensions",
@@ -235,8 +235,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]",
-				"[concat('Microsoft.Compute/virtualMachineScaleSets/',variables('namingInfix'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]"
 			]
 		}],
 		"dependsOn": [
@@ -290,11 +289,11 @@
 		},
         "resources": [{
             "type": "extensions",
-            "name": "masterExtension",
+            "name": "nodeExtension",
             "apiVersion": "[variables('storageApiVersion')]",
             "location": "[variables('resourceLocation')]",
             "tags": {
-                "displayName": "masterExtension"
+                "displayName": "nodeExtension"
             },
             "properties": {
                 "publisher": "Microsoft.OSTCExtensions",
@@ -308,8 +307,7 @@
                 }
             },
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]",
-                "[concat('Microsoft.Compute/virtualMachineScaleSets/',variables('namingInfix'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]"
             ]
         }],
 		"dependsOn": [

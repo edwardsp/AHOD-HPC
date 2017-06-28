@@ -58,10 +58,10 @@ export I_MPI_DAPL_TRANSLATION_CACHE=0
 EOF
 chown $USER:$USER /home/$USER/.bashrc
 
-nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
-myhost=`hostname -i`
-sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
-sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
+#nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
+#myhost=`hostname -i`
+#sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
+#sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
 
 ssh-keygen -f /home/$USER/.ssh/id_rsa -t rsa -N ''
 cat << EOF > /home/$USER/.ssh/config
