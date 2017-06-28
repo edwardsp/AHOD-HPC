@@ -183,8 +183,12 @@
                 "linuxConfiguration": {
                     "disablePasswordAuthentication": "true",
                     "ssh": {
-                        "sshKeyPath": "/home/hpcuser/.ssh/authorized_keys",
-                        "keyData": "[parameters('rsaPublicKey')]"
+                        "publicKeys": [
+                            {
+                                "path": "/home/hpcuser/.ssh/authorized_keys",
+                                "keyData": "[parameters('rsaPublicKey')]"
+                            }
+                        ]
                     }
                 }
 			},
