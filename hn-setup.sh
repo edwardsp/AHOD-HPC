@@ -18,12 +18,7 @@ mkdir /mnt/resource/scratch/applications
 mkdir /mnt/resource/scratch/INSTALLERS
 mkdir /mnt/resource/scratch/benchmark
 
-wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
-
-rpm -ivh epel-release-7-9.noarch.rpm
 yum install -y -q nfs-utils nmap htop pdsh
-#yum groupinstall -y "X Window System"
-#npm install -g azure-cli
 
 cat << EOF >> /etc/exports
 /home $localip.*(rw,sync,no_root_squash,no_all_squash)
@@ -40,12 +35,7 @@ systemctl start nfs-lock
 systemctl start nfs-idmap
 systemctl restart nfs-server
 
-mv clusRun.sh cn-setup.sh /home/$USER/bin
-chmod +x /home/$USER/bin/*.sh
 chown $USER:$USER /home/$USER/bin
-wget -q https://raw.githubusercontent.com/tanewill/AHOD-HPC/master/full-pingpong.sh -O /home/$USER/full-pingpong.sh
-chmod 755 /home/$USER/full-pingpong.sh
-chown $USER:$USER /home/$USER/full-pingpong.sh
 
 cat << EOF >> /home/$USER/.bashrc
 if [ -d "/opt/intel/impi" ]; then

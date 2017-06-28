@@ -57,9 +57,7 @@
 		"nicName": "[concat(variables('namingInfix'), 'nic')]",
 		"ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
         "scriptUrl": "https://raw.githubusercontent.com/edwardsp/AHOD-HPC/master/",
-		"cnSetupScript": "cn-setup.sh",
-		"hnSetupScript": "hn-setup.sh",
-		"osType": {
+        "osType": {
 			"publisher": "OpenLogic",
 			"offer": "CentOS-HPC",
 			"sku": "7.1",
@@ -181,11 +179,11 @@
 		},
 		"resources": [{
 			"type": "extensions",
-            "name": "hostExtension",
+            "name": "headnodeSetupExtension",
 			"apiVersion": "[variables('storageApiVersion')]",
 			"location": "[variables('resourceLocation')]",
 			"tags": {
-                "displayName": "hostExtension"
+                "displayName": "headnodeSetupExtension"
 			},
 			"properties": {
 				"publisher": "Microsoft.OSTCExtensions",
@@ -201,7 +199,29 @@
 			"dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]"
 			]
-		}],
+        }, {
+                "type": "extensions",
+                "name": "headnodeUpdateHostlistExtension",
+                "apiVersion": "[variables('storageApiVersion')]",
+                "location": "[variables('resourceLocation')]",
+                "tags": {
+                    "displayName": "headnodeUpdateHostlistExtension"
+                },
+                "properties": {
+                    "publisher": "Microsoft.OSTCExtensions",
+                    "type": "CustomScriptForLinux",
+                    "typeHandlerVersion": "1.5",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                        "fileUris": [ "[concat(variables('scriptUrl'), 'hn-update-hostlist.sh')]" ],
+                        "commandToExecute": "bash hn-update-hostlist.sh",
+                        "timestamp": 12345
+                    }
+                },
+                "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]"
+                ]
+         }],
 		"dependsOn": [
 			"[concat('Microsoft.Storage/storageAccounts/', variables('jumpBoxSAName'))]",
 			"[concat('Microsoft.Network/networkInterfaces/', variables('jumpBoxNicName'))]"
