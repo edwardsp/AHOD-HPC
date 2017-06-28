@@ -263,7 +263,25 @@
 						"createOption": "FromImage"
 					},
 					"imageReference": "[variables('imageReference')]"
-				},
+                },
+                "extensionProfile": {
+                    "extensions": [
+                        {
+                            "name": "installNode",
+                            "properties": {
+                                "publisher": "Microsoft.Azure.Extensions",
+                                "type": "CustomScript",
+                                "typeHandlerVersion": "2.0",
+                                "autoUpgradeMinorVersion": true,
+                                "settings": {
+                                    "fileUris": [ "[concat(variables('scriptUrl'), 'cn-setup.sh')]" ],
+                                    "commandToExecute": "bash cn-setup.sh",
+                                    "timestamp": 12345
+                                }
+                            }
+                        }
+                    ]
+                },
 				"osProfile": {
 					"computerNamePrefix": "[variables('namingInfix')]",
                     "adminUsername": "hpcuser",
@@ -286,30 +304,7 @@
 					}]
 				}
 			}
-		},
-        "resources": [{
-            "type": "extensions",
-            "name": "nodeExtension",
-            "apiVersion": "[variables('storageApiVersion')]",
-            "location": "[variables('resourceLocation')]",
-            "tags": {
-                "displayName": "nodeExtension"
-            },
-            "properties": {
-                "publisher": "Microsoft.OSTCExtensions",
-                "type": "CustomScriptForLinux",
-                "typeHandlerVersion": "1.5",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "fileUris": "[variables('vmScripts').scriptsToDownload]",
-                    "commandToExecute": "bash cn-setup.sh",
-                    "timestamp": 4
-                }
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]"
-            ]
-        }],
+        },
 		"dependsOn": [
 			"[concat('Microsoft.Storage/storageAccounts/', variables('jumpBoxSAName'))]",
             "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
