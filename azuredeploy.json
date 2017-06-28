@@ -30,7 +30,7 @@
 			}
         },
         "rsaPublicKey": {
-			"type": "SecureString",
+            "type": "String",
 			"metadata": {
                 "description": "The RSA public key to access the headnode."
 			}
@@ -184,7 +184,7 @@
                     "disablePasswordAuthentication": "true",
                     "ssh": {
                         "sshKeyPath": "/home/hpcuser/.ssh/authorized_keys",
-                        "keyData": "[parameters('sshPublicKey')]"
+                        "keyData": "[parameters('rsaPublicKey')]"
                     }
                 }
 			},
