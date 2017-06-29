@@ -19,7 +19,7 @@ mkdir /mnt/resource/scratch/INSTALLERS
 mkdir /mnt/resource/scratch/benchmark
 
 yum --enablerepo=extras install -y -q epel-release
-yum install -y -q nfs-utils nmap htop pdsh
+yum install -y -q nfs-utils nmap htop pdsh screen
 
 cat << EOF >> /etc/exports
 /home $localip.*(rw,sync,no_root_squash,no_all_squash)
@@ -50,11 +50,6 @@ export WCOLL=/home/$USER/bin/hostlist
 EOF
 chown $USER:$USER /home/$USER/.bashrc
 
-#nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
-#myhost=`hostname -i`
-#sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
-#sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
-
 touch /home/hpcuser/bin/hostlist
 chown hpcuser:hpcuser /home/hpcuser/bin/hostlist
 
@@ -72,9 +67,5 @@ chown $USER:$USER /home/$USER/.ssh/*
 
 # Don't require password for HPC user sudo
 echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-    
 # Disable tty requirement for sudo
 sed -i 's/^Defaults[ ]*requiretty/# Defaults requiretty/g' /etc/sudoers
-
-
-

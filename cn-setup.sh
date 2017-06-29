@@ -16,3 +16,8 @@ setsebool -P use_nfs_home_dirs 1
 mount -a
 
 echo $(hostname) >> /home/hpcuser/bin/hostlist
+
+# Don't require password for HPC user sudo
+echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# Disable tty requirement for sudo
+sed -i 's/^Defaults[ ]*requiretty/# Defaults requiretty/g' /etc/sudoers

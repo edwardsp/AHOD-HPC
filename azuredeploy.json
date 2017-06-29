@@ -40,12 +40,9 @@
 		"resourceLocation": "[resourceGroup().location]",
 		"namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
 		"longNamingInfix": "[toLower(parameters('vmssName'))]",
-		"jumpBoxName": "[concat(variables('longNamingInfix'),'jb')]",
-		"jumpBoxSAName": "[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'), 'jumpboxsa')), 'jb')]",
+        "jumpBoxName": "[concat(variables('longNamingInfix'),'jb')]",
         "jumpBoxIPConfigName": "[concat(variables('jumpBoxName'), 'ipconfig')]",
-		"jumpBoxNicName": "[concat(variables('jumpBoxName'), 'nic')]",
-		"storageAccountType": "Standard_LRS",
-        "newStorageAccountSuffix": "[concat(variables('namingInfix'), 'sa')]",
+        "jumpBoxNicName": "[concat(variables('jumpBoxName'), 'nic')]",
         "addressPrefix": "10.0.0.0/16",
 		"subnetPrefix": "10.0.0.0/24",
 		"virtualNetworkName": "[concat(variables('namingInfix'), 'vnet')]",
@@ -92,14 +89,6 @@
 					"addressPrefix": "[variables('subnetPrefix')]"
 				}
 			}]
-		}
-	},{
-		"type": "Microsoft.Storage/storageAccounts",
-		"name": "[variables('jumpBoxSAName')]",
-		"apiVersion": "[variables('storageApiVersion')]",
-		"location": "[variables('resourceLocation')]",
-		"properties": {
-			"accountType": "[variables('storageAccountType')]"
 		}
     }, {
 		"type": "Microsoft.Network/publicIPAddresses",
@@ -169,13 +158,7 @@
 				"networkInterfaces": [{
 					"id": "[resourceId('Microsoft.Network/networkInterfaces',variables('jumpBoxNicName'))]"
 				}]
-			},
-			"diagnosticsProfile": {
-				"bootDiagnostics": {
-					"enabled": "true",
-					"storageUri": "[concat('http://',variables('jumpBoxSAName'),'.blob.core.windows.net')]"
-				}
-			}
+            }
 		},
 		"resources": [{
 			"type": "extensions",
@@ -201,8 +184,7 @@
             ]
         }],
 		"dependsOn": [
-			"[concat('Microsoft.Storage/storageAccounts/', variables('jumpBoxSAName'))]",
-			"[concat('Microsoft.Network/networkInterfaces/', variables('jumpBoxNicName'))]"
+            "[concat('Microsoft.Network/networkInterfaces/', variables('jumpBoxNicName'))]"
 		]
 	}, {
 		"type": "Microsoft.Compute/virtualMachineScaleSets",
@@ -268,7 +250,6 @@
 			}
         },
 		"dependsOn": [
-			"[concat('Microsoft.Storage/storageAccounts/', variables('jumpBoxSAName'))]",
             "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
             "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]"
 		]
