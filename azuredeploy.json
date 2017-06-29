@@ -144,24 +144,6 @@
 			"hardwareProfile": {
 				"vmSize": "Standard_D14_v2"
             },
-            "extensionProfile": {
-                "extensions": [
-                    {
-                        "name": "installNode",
-                        "properties": {
-                            "publisher": "Microsoft.Azure.Extensions",
-                            "type": "CustomScript",
-                            "typeHandlerVersion": "2.0",
-                            "autoUpgradeMinorVersion": true,
-                            "settings": {
-                                "fileUris": [ "[concat(variables('scriptUrl'), 'hn-setup.sh')]" ],
-                                "commandToExecute": "bash hn-setup.sh",
-                                "timestamp": 12345
-                            }
-                        }
-                    }
-                ]
-            },
 			"osProfile": {
 				"computerName": "[variables('jumpBoxName')]",
                 "adminUsername": "hpcuser",
@@ -197,26 +179,25 @@
 		},
 		"resources": [{
 			"type": "extensions",
-            "name": "updateHostlistExtension",
-			"apiVersion": "[variables('storageApiVersion')]",
+            "name": "updateHeadnodeExtension",
+            "apiVersion": "[variables('computeApiVersion')]",
 			"location": "[variables('resourceLocation')]",
 			"tags": {
-                "displayName": "updateHostlistExtension"
+                "displayName": "installHeadnodeExtension"
 			},
 			"properties": {
-				"publisher": "Microsoft.OSTCExtensions",
-				"type": "CustomScriptForLinux",
-				"typeHandlerVersion": "1.5",
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
 				"autoUpgradeMinorVersion": true,
 				"settings": {
-                    "fileUris": [ "[concat(variables('scriptUrl'), 'hn-update-hostlist.sh')]" ],
-                    "commandToExecute": "bash hn-update-hostlist.sh",
+                    "fileUris": [ "[concat(variables('scriptUrl'), 'hn-setup.sh')]" ],
+                    "commandToExecute": "bash hn-setup.sh",
                     "timestamp": 12345
 				}
 			},
 			"dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]",
-                "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('jumpBoxName'))]"
             ]
         }],
 		"dependsOn": [
