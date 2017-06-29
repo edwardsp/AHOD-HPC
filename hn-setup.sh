@@ -18,6 +18,7 @@ mkdir /mnt/resource/scratch/applications
 mkdir /mnt/resource/scratch/INSTALLERS
 mkdir /mnt/resource/scratch/benchmark
 
+yum --enablerepo=extras install -y -q epel-release
 yum install -y -q nfs-utils nmap htop pdsh
 
 cat << EOF >> /etc/exports
