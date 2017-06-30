@@ -5,14 +5,12 @@ USER=hpcuser
 IP=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 localip=`echo $IP | cut --delimiter='.' -f -3`
 
-echo "*               hard    memlock         unlimited" >> /etc/security/limits.conf
-echo "*               soft    memlock         unlimited" >> /etc/security/limits.conf
+cat << EOF >> /etc/security/limits.conf
+*               hard    memlock         unlimited
+*               soft    memlock         unlimited
+EOF
 
-mkdir -p /home/$USER/.ssh
-mkdir -p /home/$USER/bin
 mkdir -p /mnt/resource/scratch
-mkdir -p /mnt/nfsshare
-
 mkdir /mnt/resource/scratch/
 mkdir /mnt/resource/scratch/applications
 mkdir /mnt/resource/scratch/INSTALLERS
@@ -36,12 +34,14 @@ systemctl start nfs-lock
 systemctl start nfs-idmap
 systemctl restart nfs-server
 
+mkdir -p /home/$USER/bin
 chown $USER:$USER /home/$USER/bin
 
 cat << EOF >> /home/$USER/.bashrc
 if [ -d "/opt/intel/impi" ]; then
     source /opt/intel/impi/*/bin64/mpivars.sh
 fi
+exprot PATH=/home/$USER/bin:$PATH
 export I_MPI_FABRICS=shm:dapl
 export I_MPI_DAPL_PROVIDER=ofa-v2-ib0
 export I_MPI_DYNAMIC_CONNECTION=0
@@ -69,3 +69,55 @@ chown $USER:$USER /home/$USER/.ssh/*
 echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 # Disable tty requirement for sudo
 sed -i 's/^Defaults[ ]*requiretty/# Defaults requiretty/g' /etc/sudoers
+
+#
+# base36ToDec script
+#
+cat << EOF > /home/$USER/bin/base36ToDec
+#!/bin/bash
+function getBase36()
+{
+        C=$1
+        if [ -z "${C##[0-9]}" ]; then
+                echo $C
+        else
+                echo "$(printf "%d" "'$C") - $(printf "%d" "'A") + 10" | bc
+        fi
+}
+RES=0
+for digit in $(echo $1 | grep -o .); do
+        RES=$(echo "$RES * 36" | bc)
+        RES=$(echo "$RES + $(getBase36 $digit)" | bc)
+done
+echo $RES
+EOF
+chown $USER:$USER /home/$USER/bin/base36ToDec
+chmod 755 /home/$USER/bin/base36ToDec
+
+#
+# add .screenrc file
+#
+cat << EOF > /home/$USER/.screenrc
+screen -t "top"  0 top
+screen -t "bash 1"  0 bash
+
+defscrollback 10000
+
+sessionname local
+shelltitle bash
+startup_message off
+
+vbell off
+
+bind = resize =
+bind + resize +2
+bind - resize -2
+bind _ resize max
+
+caption always "%{= wr} $HOSTNAME %{= wk} %-Lw%{= wr}%n%f %t%{= wk}%+Lw %{= wr} %=%c %Y-%m-%d "
+
+
+zombie cr
+escape ^]]
+EOF
+chown $USER:$USER /home/$USER/.screenrc
