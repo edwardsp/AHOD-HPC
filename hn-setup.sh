@@ -41,7 +41,7 @@ cat << EOF >> /home/$USER/.bashrc
 if [ -d "/opt/intel/impi" ]; then
     source /opt/intel/impi/*/bin64/mpivars.sh
 fi
-exprot PATH=/home/$USER/bin:$PATH
+export PATH=/home/$USER/bin:\$PATH
 export I_MPI_FABRICS=shm:dapl
 export I_MPI_DAPL_PROVIDER=ofa-v2-ib0
 export I_MPI_DYNAMIC_CONNECTION=0
@@ -121,3 +121,27 @@ zombie cr
 escape ^]]
 EOF
 chown $USER:$USER /home/$USER/.screenrc
+
+
+# All reduce test
+cat << EOF > /home/$USER/test_script.sh
+for NPROCS in 1 2 4 8 16 32 64; do
+	for PPN in 1 2 4 8 10 12 14 15 16; do
+		NP=$(bc <<< "$NPROCS * $PPN")
+		mpirun -np $NP -ppn $PPN -machinefile ~/bin/hostlist IMB-MPI1 Allreduce -npmin $NP 2>&1 | tee IMB_Allreduce_${NP}_${NPROCS}x${PPN}.log
+	done
+done
+EOF
+chown $USER:$USER /home/$USER/test_script.sh
+
+# nmap for hosts (until better solution)
+cat << EOF > /home/$USER/nmapForHosts.sh
+IP=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+localip=`echo $IP | cut --delimiter='.' -f -3`
+nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
+myhost=`hostname -i`
+sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
+sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
+EOF
+chown $USER:$USER /home/$USER/nmapForHosts.sh
+
