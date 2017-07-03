@@ -17,7 +17,7 @@ mkdir /mnt/resource/scratch/INSTALLERS
 mkdir /mnt/resource/scratch/benchmark
 
 yum --enablerepo=extras install -y -q epel-release
-yum install -y -q nfs-utils nmap htop pdsh screen
+yum install -y -q nfs-utils nmap htop pdsh screen git
 
 cat << EOF >> /etc/exports
 /home $localip.*(rw,sync,no_root_squash,no_all_squash)
@@ -71,30 +71,6 @@ echo "$USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 sed -i 's/^Defaults[ ]*requiretty/# Defaults requiretty/g' /etc/sudoers
 
 #
-# base36ToDec script
-#
-cat << EOF > /home/$USER/bin/base36ToDec
-#!/bin/bash
-function getBase36()
-{
-        C=$1
-        if [ -z "${C##[0-9]}" ]; then
-                echo $C
-        else
-                echo "$(printf "%d" "'$C") - $(printf "%d" "'A") + 10" | bc
-        fi
-}
-RES=0
-for digit in $(echo $1 | grep -o .); do
-        RES=$(echo "$RES * 36" | bc)
-        RES=$(echo "$RES + $(getBase36 $digit)" | bc)
-done
-echo $RES
-EOF
-chown $USER:$USER /home/$USER/bin/base36ToDec
-chmod 755 /home/$USER/bin/base36ToDec
-
-#
 # add .screenrc file
 #
 cat << EOF > /home/$USER/.screenrc
@@ -116,32 +92,13 @@ bind _ resize max
 
 caption always "%{= wr} $HOSTNAME %{= wk} %-Lw%{= wr}%n%f %t%{= wk}%+Lw %{= wr} %=%c %Y-%m-%d "
 
-
 zombie cr
 escape ^]]
 EOF
 chown $USER:$USER /home/$USER/.screenrc
 
-
-# All reduce test
-cat << EOF > /home/$USER/test_script.sh
-for NPROCS in 1 2 4 8 16 32 64; do
-	for PPN in 1 2 4 8 10 12 14 15 16; do
-                NP=\$(bc <<< "\$NPROCS * \$PPN")
-		mpirun -np \$NP -ppn \$PPN -machinefile ~/bin/hostlist IMB-MPI1 Allreduce -npmin \$NP 2>&1 | tee IMB_Allreduce_\${NP}_\${NPROCS}x\${PPN}.log
-	done
-done
-EOF
-chown $USER:$USER /home/$USER/test_script.sh
-
-# nmap for hosts (until better solution)
-cat << EOF > /home/$USER/nmapForHosts.sh
-IP=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
-localip=`echo $IP | cut --delimiter='.' -f -3`
-nmap -sn $localip.* | grep $localip. | awk '{print $5}' > /home/$USER/bin/nodeips.txt
-myhost=`hostname -i`
-sed -i '/\<'$myhost'\>/d' /home/$USER/bin/nodeips.txt
-sed -i '/\<10.0.0.1\>/d' /home/$USER/bin/nodeips.txt
-EOF
-chown $USER:$USER /home/$USER/nmapForHosts.sh
+cd /home/$USER
+git clone https://github.com/edwardsp/hpc-azure-util.git
+cp hpc-azure-util bin
+chown $USER:$USER -R hpc-azure-util
 
