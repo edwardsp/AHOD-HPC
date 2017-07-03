@@ -99,6 +99,6 @@ chown $USER:$USER /home/$USER/.screenrc
 
 cd /home/$USER
 git clone https://github.com/edwardsp/hpc-azure-util.git
-cp hpc-azure-util bin
 chown $USER:$USER -R hpc-azure-util
+cp hpc-azure-util/* bin
 
